@@ -1,0 +1,23 @@
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0 as build
+WORKDIR /build
+#add other .csproj here as they get added
+# add .csproj files here as they get added
+COPY TelnetTest.sln .
+
+RUN dotnet restore TelnetTest.sln 
+COPY . .
+RUN dotnet test
+    
+
+RUN dotnet publish -c Release TelnetTest.sln -o /publish
+
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.0 as runtime
+WORKDIR /app
+USER root
+
+RUN useradd -ms /bin/bash dotnetuser \
+&& chown dotnetuser /app 
+USER dotnetuser
+COPY --from=build /publish .
+COPY --from=build /results /results
+CMD ["dotnet", "/build/TelnetTest.dll"]
