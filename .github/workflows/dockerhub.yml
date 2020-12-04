@@ -11,7 +11,7 @@ jobs:
         uses: docker/build-push-action@v1
         with:
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.DAN_PAT_FOR_GHCR }}
           registry: ghcr.io
           repository: observian/tcptest/tcp-tester
           tag_with_ref: true
