@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
         - name: tcp-test
-          image: app
+          image: docker.pkg.github.com/observian/tcptest/tcp-tester:latest
           env:
             - name: PORT
               value: "8080"
