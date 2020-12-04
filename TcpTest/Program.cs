@@ -29,6 +29,10 @@ namespace TelnetTest
 			return WebHost.CreateDefaultBuilder(args)
 				.UseStartup<Startup>()
 				.UseKestrel()
+				.ConfigureAppConfiguration((hostingContext, config) =>
+				{
+					config.AddEnvironmentVariables();
+				})
 				.ConfigureKestrel((context, options) => { options.Listen(IPAddress.IPv6Any, Convert.ToInt32(port ?? "8080")); });
 		}
 	}

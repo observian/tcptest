@@ -11,7 +11,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: tcp-test-deployment
-  namespace: your-namespace
+  namespace: default
   labels:
     app: tcp-test-app
 spec:
@@ -21,19 +21,34 @@ spec:
       app: tcp-test-app
   template:
     metadata:
-      namespace: your-namespace
+      namespace: default
       labels:
         app: tcp-test-app
     spec:
       containers:
         - name: tcp-test
-          image: observian/tcptest:1.2
+          image: app
+          env:
+            - name: PORT
+              value: "8080"
+            - name: HOST_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
 ---
 kind: Service
 apiVersion: v1
 metadata:
   name: tcp-test-service
-  namespace: your-namespace
+  namespace: default
 spec:
   type: LoadBalancer
   selector:
@@ -47,9 +62,6 @@ spec:
       protocol: TCP
       port: 443
       targetPort: 8080
-  env:
-    - name: PORT
-      value: "8080"
 ```
 You can deploy this to your cluster with the yaml above.  The port is configurable via the env variable if you need to adjust it; just be sure you also adjust the target ports on the service if you do.
 
